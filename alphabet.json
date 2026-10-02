@@ -1,0 +1,38 @@
+{
+  "_help": "Each entry is a sequence of directions: u d l r (up down left right) and tl tr bl br (the diagonals). Edit freely: add symbols, change letters. A character can list several sequences: [\"bl br r\", \"bl br l\"]. Two entries may not share an exact sequence. A sequence may be the start of a longer one (L = 'd r' is the start of F = 'd r r'); you finish a letter with a middle click, so that is fine.",
+  "letters": {
+    "A": ["bl br r", "bl br l"],
+    "B": "d r bl r bl",
+    "C": "l d r",
+    "D": "d r bl",
+    "E": "d r r r",
+    "F": "d r r",
+    "G": "bl br u l",
+    "H": ["d d r", "d r d"],
+    "I": "d l l",
+    "J": ["r d tl", "r l d tl"],
+    "K": "d bl br",
+    "L": "d r",
+    "M": "d u d u d",
+    "N": "d u d u",
+    "O": "l d r u",
+    "P": "d br l",
+    "Q": "l d r u br",
+    "R": "d br bl br",
+    "S": ["tl bl br bl tl", "l d r d l"],
+    "T": "d l",
+    "U": "br tr d",
+    "V": "br tr",
+    "W": "br tr br tr",
+    "X": "br bl",
+    "Y": "br tr bl",
+    "Z": "r bl r"
+  },
+  "symbols": {
+    ".": "tl",
+    ",": "tr",
+    "?": "u",
+    "!": "l",
+    "'": "r"
+  }
+}

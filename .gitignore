@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+# personal / per-device, not for the repo
+notes/
+calibration.json
