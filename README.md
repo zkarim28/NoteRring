@@ -101,6 +101,12 @@ A working prototype.
 - **Not yet done:** tuning against real handwriting-by-flick on a real hand. Expect to adjust `--min-flick` and the alphabet as you learn what is comfortable.
 - The pad reports relative motion only, so there is no absolute position; that is why letters are built from direction flicks.
 
+## Hardware
+
+[hardware/enclosure](hardware/enclosure) holds the parametric CAD for a wearable: a watch-style head for the ESP32-S3 Super Mini, battery, OLED and
+SD module, built as one link of a print-in-place chain band with enclosed pins and a snap clasp. It is designed and checked by computer but **not yet printed**,
+and most part sizes are placeholders: read its README before printing.
+
 ## Roadmap
 
 - Port the writer from Python to the ESP32-S3 itself, so it runs without a computer.
@@ -111,6 +117,7 @@ A working prototype.
 ## Layout
 
 ```
+hardware/enclosure the 3D-printable wrist unit: parametric CAD, chain band with snap clasp (see its README)
 ring_writer.py     the app: writer state, terminal UI, command line
 flick.py           flick detector and calibration
 alphabet.py        loads alphabet.json
