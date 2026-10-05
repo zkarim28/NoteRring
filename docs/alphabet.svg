@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="934" height="922" viewBox="0 0 934 922" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
-<rect width="934" height="922" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="934" height="900" viewBox="0 0 934 900" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect width="934" height="900" fill="#ffffff"/>
 <text x="24" y="52" font-size="30" font-weight="700" fill="#1f2328">Ring Writer alphabet</text>
 <text x="24" y="82" font-size="15" fill="#59636e">Flick one direction, lift your finger, flick the next.</text>
 <text x="24" y="104" font-size="15" fill="#59636e">Then middle-click to accept the letter.</text>
@@ -176,22 +176,9 @@
 <rect x="304" y="702" width="28" height="28" rx="6" fill="#ffffff" stroke="#d0d7de"/><line x1="310.0" y1="716.0" x2="320.0" y2="716.0" stroke="#0969da" stroke-width="3" stroke-linecap="round"/><polygon points="327.0,716.0 320.0,720.5 320.0,711.5" fill="#0969da"/>
 <rect x="335" y="702" width="28" height="28" rx="6" fill="#ffffff" stroke="#d0d7de"/><line x1="354.7" y1="710.3" x2="347.6" y2="717.4" stroke="#0969da" stroke-width="3" stroke-linecap="round"/><polygon points="342.6,722.4 344.4,714.2 350.8,720.6" fill="#0969da"/>
 <rect x="366" y="702" width="28" height="28" rx="6" fill="#ffffff" stroke="#d0d7de"/><line x1="372.0" y1="716.0" x2="382.0" y2="716.0" stroke="#0969da" stroke-width="3" stroke-linecap="round"/><polygon points="389.0,716.0 382.0,720.5 382.0,711.5" fill="#0969da"/>
-<rect x="472" y="690" width="214" height="56" rx="10" fill="#f6f8fa" stroke="#d0d7de"/>
-<text x="488" y="730.0" font-size="34" font-weight="700" fill="#1f2328">.</text>
-<rect x="528" y="702" width="28" height="28" rx="6" fill="#ffffff" stroke="#d0d7de"/><line x1="547.7" y1="721.7" x2="540.6" y2="714.6" stroke="#0969da" stroke-width="3" stroke-linecap="round"/><polygon points="535.6,709.6 543.8,711.4 537.4,717.8" fill="#0969da"/>
-<rect x="696" y="690" width="214" height="56" rx="10" fill="#f6f8fa" stroke="#d0d7de"/>
-<text x="712" y="730.0" font-size="34" font-weight="700" fill="#1f2328">,</text>
-<rect x="752" y="702" width="28" height="28" rx="6" fill="#ffffff" stroke="#d0d7de"/><line x1="760.3" y1="721.7" x2="767.4" y2="714.6" stroke="#0969da" stroke-width="3" stroke-linecap="round"/><polygon points="772.4,709.6 770.6,717.8 764.2,711.4" fill="#0969da"/>
-<rect x="24" y="756" width="214" height="56" rx="10" fill="#f6f8fa" stroke="#d0d7de"/>
-<text x="40" y="796.0" font-size="34" font-weight="700" fill="#1f2328">?</text>
-<rect x="80" y="768" width="28" height="28" rx="6" fill="#ffffff" stroke="#d0d7de"/><line x1="94.0" y1="790.0" x2="94.0" y2="780.0" stroke="#0969da" stroke-width="3" stroke-linecap="round"/><polygon points="94.0,773.0 98.5,780.0 89.5,780.0" fill="#0969da"/>
-<rect x="248" y="756" width="214" height="56" rx="10" fill="#f6f8fa" stroke="#d0d7de"/>
-<text x="264" y="796.0" font-size="34" font-weight="700" fill="#1f2328">!</text>
-<rect x="304" y="768" width="28" height="28" rx="6" fill="#ffffff" stroke="#d0d7de"/><line x1="326.0" y1="782.0" x2="316.0" y2="782.0" stroke="#0969da" stroke-width="3" stroke-linecap="round"/><polygon points="309.0,782.0 316.0,777.5 316.0,786.5" fill="#0969da"/>
-<rect x="472" y="756" width="214" height="56" rx="10" fill="#f6f8fa" stroke="#d0d7de"/>
-<text x="488" y="796.0" font-size="34" font-weight="700" fill="#1f2328">'</text>
-<rect x="528" y="768" width="28" height="28" rx="6" fill="#ffffff" stroke="#d0d7de"/><line x1="534.0" y1="782.0" x2="544.0" y2="782.0" stroke="#0969da" stroke-width="3" stroke-linecap="round"/><polygon points="551.0,782.0 544.0,786.5 544.0,777.5" fill="#0969da"/>
-<text x="24" y="852" font-size="13.5" fill="#59636e">middle click = accept the letter (nothing drawn: accept the number, else space)</text>
-<text x="24" y="874" font-size="13.5" fill="#59636e">left click = undo the last flick (nothing drawn: backspace)     right click = space</text>
-<text x="24" y="896" font-size="13.5" fill="#59636e">wheel = number 0-9: up adds one, down subtracts one; middle click accepts it</text>
+<text x="24" y="786" font-size="13.5" fill="#59636e">middle click = accept the letter (nothing drawn: accept the number or mark, else space)</text>
+<text x="24" y="808" font-size="13.5" fill="#59636e">left click = undo the last flick (nothing drawn: backspace)     right click = space</text>
+<text x="24" y="830" font-size="13.5" fill="#59636e">wheel up = number 0-9 (up adds, down subtracts); middle click accepts it</text>
+<text x="24" y="852" font-size="13.5" fill="#59636e">wheel down from rest = punctuation: . , ? ! &#x27; &quot; - : ; ( ) / @ &amp; # $ % + = * _   (middle click inserts)</text>
+<text x="24" y="874" font-size="13.5" fill="#59636e">no letter matches? a guess like ~W? appears: middle click takes it, left click undoes a flick</text>
 </svg>

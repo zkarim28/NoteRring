@@ -13,3 +13,4 @@ hardware/enclosure/*.png
 hardware/enclosure/*.stl
 hardware/enclosure/layout.json
 *.3mf
+settings.json

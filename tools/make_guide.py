@@ -3,6 +3,7 @@
     python tools/make_guide.py [--alphabet alphabet.json] [--out docs]
 """
 import argparse
+import html
 import math
 import os
 import sys
@@ -11,7 +12,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, ROOT)
 
-from alphabet import ALPHABET_FILE, ARROWS, LONG_NAMES, NAME_TO_DIR, NAMES, arrows, load_entries   # noqa: E402
+from alphabet import ALPHABET_FILE, ARROWS, LONG_NAMES, NAME_TO_DIR, NAMES, arrows, load_entries, load_punctuation, near_collisions   # noqa: E402
 
 CELL_W, GAP, MARGIN, COLS = 214, 10, 24, 4
 CHIP = 28
@@ -32,13 +33,13 @@ def chip(x, y, name, color=ACCENT):
             f'<polygon points="{head}" fill="{color}"/>')
 
 
-def make_svg(entries):
+def make_svg(entries, marks=()):
     cell_h = lambda ch_seqs: 20 + 36 * len(ch_seqs[1])
     rows = [entries[i:i + COLS] for i in range(0, len(entries), COLS)]
     header, footer = 150, 100
     body = sum(max(cell_h(e) for e in row) + GAP for row in rows)
     width = MARGIN * 2 + COLS * CELL_W + (COLS - 1) * GAP
-    height = header + body + footer
+    height = header + body + footer + 44
     out = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" '
            f'font-family="{FONT}">',
            f'<rect width="{width}" height="{height}" fill="{PAPER}"/>',
@@ -69,16 +70,18 @@ def make_svg(entries):
                 for k, name in enumerate(names):
                     out.append(chip(x + 56 + k * (CHIP + 3), y + 12 + i * 36, name, ACCENT if i == 0 else MUTED))
         y += h + GAP
-    controls = ["middle click = accept the letter (nothing drawn: accept the number, else space)",
+    controls = ["middle click = accept the letter (nothing drawn: accept the number or mark, else space)",
                 "left click = undo the last flick (nothing drawn: backspace)     right click = space",
-                "wheel = number 0-9: up adds one, down subtracts one; middle click accepts it"]
+                "wheel up = number 0-9 (up adds, down subtracts); middle click accepts it",
+                "wheel down from rest = punctuation: " + html.escape(" ".join(marks)) + "   (middle click inserts)",
+                "no letter matches? a guess like ~W? appears: middle click takes it, left click undoes a flick"]
     for i, line in enumerate(controls):
         out.append(f'<text x="{MARGIN}" y="{y + 30 + i * 22}" font-size="13.5" fill="{MUTED}">{line}</text>')
     out.append("</svg>")
     return "\n".join(out)
 
 
-def make_markdown(entries):
+def make_markdown(entries, marks=()):
     seqs_of = {ch: s for ch, s in entries}
     lines = ["# Ring Writer reference guide", "",
              "*Generated from `alphabet.json` by `tools/make_guide.py`. Edit the alphabet, then run the script again.*", "",
@@ -91,18 +94,32 @@ def make_markdown(entries):
              "3. **Middle click** to accept it. The screen shows what you have drawn so far (for example `d r =L`) and which",
              "   letters it could still become, so you can check before you accept.",
              "4. Made a mistake? **Left click** undoes the last flick. With nothing drawn it deletes a character.", "",
+             "### When your flicks match no letter", "",
+             "The screen shows the best guess, for example `br u br tr =?` with `~W? mid=ok` and the tag `FIX`. **Nothing changes until you middle-click**:",
+             "middle click takes the guess, left click undoes the last flick so you can fix it yourself. It only guesses when one letter is clearly the best:",
+             "a flick that landed near a direction boundary counts as evidence, then any one flick off by 45 degrees, then one stray or missing flick (3+ flicks).",
+             "If several letters tie it shows them (`A/F/H?`) and middle click does nothing. A sequence that is already a letter is never replaced. `--no-suggest` turns it off.", "",
              "Every flick is separate: the pause when you lift is what lets the same direction repeat (`d d r`).", "",
              "## Letters", "", "| Letter | Flicks | Codes |", "|:--:|:--|:--|"]
     for ch, seqs in entries:
         if ch.isalpha():
             lines.append(f"| **{ch}** | " + "<br>".join(arrows(s) for s in seqs) + " | "
                          + "<br>".join("`" + " ".join(s) + "`" for s in seqs) + " |")
-    lines += ["", "## Symbols", "", "| Symbol | Flick | Code |", "|:--:|:--|:--|"]
-    for ch, seqs in entries:
-        if not ch.isalpha():
-            lines.append(f"| `{ch}` | " + "<br>".join(arrows(s) for s in seqs) + " | "
-                         + "<br>".join("`" + " ".join(s) + "`" for s in seqs) + " |")
-    lines += ["", "Punctuation sticks to the word before it. The first letter of the text, and the first after `. ? !`, is a capital.", ""]
+    extra = [(ch, seqs) for ch, seqs in entries if not ch.isalpha()]
+    if extra:
+        lines += ["", "## Symbols on strokes", "", "| Symbol | Flick | Code |", "|:--:|:--|:--|"]
+        for ch, seqs in extra:
+            lines.append(f"| `{ch}` | " + "<br>".join(arrows(s) for s in seqs) + " | " + "<br>".join("`" + " ".join(s) + "`" for s in seqs) + " |")
+    lines += ["", "## Punctuation (on the wheel)", "",
+              "Scroll the **wheel down** from rest to walk through the marks, **up** to go back (up past the first mark cancels). **Middle click** inserts the one shown.", "",
+              "```", " ".join(marks), "```", "",
+              "Edit the `punctuation` list in `alphabet.json` to reorder or change them. `. , ? ! : ; ) %` stick to the word before them.",
+              "The first letter of the text, and the first after `. ? !`, is a capital.", ""]
+    close = near_collisions(entries)
+    if close:
+        lines += ["## Letters one slip apart", "",
+                  "A flick that is 45 degrees off turns one of these into the other, and no correction can notice because both are valid. Be careful with:", ""]
+        lines += [f"- **{a}** `{sa}` and **{b}** `{sb}`" for a, sa, b, sb in close] + [""]
     # letters whose sequence is the start of another one
     overlaps = []
     for ch, seqs in entries:
@@ -116,15 +133,16 @@ def make_markdown(entries):
                   "You accept a letter yourself, so this is safe: just keep flicking for the longer one, or middle click to take the shorter.", ""]
         lines += overlaps + [""]
     lines += ["## Numbers and spaces", "",
-              "- **Wheel**: each tick up adds one, each tick down subtracts one (0 to 9). **Middle click** accepts the number as a character.",
+              "- **Wheel up** from rest starts a number: each tick up adds one, each tick down subtracts one (0 to 9). **Middle click** accepts it as a character.",
               "- **Right click** inserts a space. Middle click with nothing drawn and no number selected also inserts one.", "",
               "## Buttons at a glance", "",
               "| Control | Does |", "|:--|:--|",
               "| Flick | adds a direction to the letter |",
-              "| Middle click | accepts the letter, else the number, else a space |",
+              "| Middle click | accepts the letter (or the suggested one), else the number or mark, else a space |",
               "| Left click | undoes the last flick, else backspace |",
               "| Right click | space |",
-              "| Wheel | number 0-9 |", ""]
+              "| Wheel up | number 0-9 |",
+              "| Wheel down | punctuation marks |", ""]
     return "\n".join(lines)
 
 
@@ -136,9 +154,9 @@ def main():
     entries = load_entries(a.alphabet)
     os.makedirs(a.out, exist_ok=True)
     with open(os.path.join(a.out, "alphabet.svg"), "w") as f:
-        f.write(make_svg(entries))
+        f.write(make_svg(entries, load_punctuation(a.alphabet)))
     with open(os.path.join(a.out, "GUIDE.md"), "w") as f:
-        f.write(make_markdown(entries))
+        f.write(make_markdown(entries, load_punctuation(a.alphabet)))
     print(f"wrote {a.out}/GUIDE.md and alphabet.svg ({len(entries)} characters)")
 
 

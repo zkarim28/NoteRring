@@ -1,16 +1,25 @@
 {
-  "_help": "Each entry is a sequence of directions: u d l r (up down left right) and tl tr bl br (the diagonals). Edit freely: add symbols, change letters. A character can list several sequences: [\"bl br r\", \"bl br l\"]. Two entries may not share an exact sequence. A sequence may be the start of a longer one (L = 'd r' is the start of F = 'd r r'); you finish a letter with a middle click, so that is fine.",
+  "_help": "Each letter is a sequence of directions: u d l r (up down left right) and tl tr bl br (the diagonals). Edit freely. A letter can list several sequences, e.g. [\"bl br r\", \"bl br l\"]. Two letters may not share an exact sequence. A sequence may be the start of a longer one (L = 'd r' starts F = 'd r r'); you finish a letter with a middle click, so that is fine. 'punctuation' is the list of marks the wheel walks through: scroll DOWN from rest, middle click to insert one. You may still add a \"symbols\" group (character -> sequence) if you want some marks on strokes.",
   "letters": {
-    "A": ["bl br r", "bl br l"],
+    "A": [
+      "bl br r",
+      "bl br l"
+    ],
     "B": "d r bl r bl",
     "C": "l d r",
     "D": "d r bl",
     "E": "d r r r",
     "F": "d r r",
     "G": "bl br u l",
-    "H": ["d d r", "d r d"],
+    "H": [
+      "d d r",
+      "d r d"
+    ],
     "I": "d l l",
-    "J": ["r d tl", "r l d tl"],
+    "J": [
+      "r d tl",
+      "r l d tl"
+    ],
     "K": "d bl br",
     "L": "d r",
     "M": "d u d u d",
@@ -19,7 +28,10 @@
     "P": "d br l",
     "Q": "l d r u br",
     "R": "d br bl br",
-    "S": ["tl bl br bl tl", "l d r d l"],
+    "S": [
+      "tl bl br bl tl",
+      "l d r d l"
+    ],
     "T": "d l",
     "U": "br tr d",
     "V": "br tr",
@@ -28,11 +40,27 @@
     "Y": "br tr bl",
     "Z": "r bl r"
   },
-  "symbols": {
-    ".": "tl",
-    ",": "tr",
-    "?": "u",
-    "!": "l",
-    "'": "r"
-  }
+  "punctuation": [
+    ".",
+    ",",
+    "?",
+    "!",
+    "'",
+    "\"",
+    "-",
+    ":",
+    ";",
+    "(",
+    ")",
+    "/",
+    "@",
+    "&",
+    "#",
+    "$",
+    "%",
+    "+",
+    "=",
+    "*",
+    "_"
+  ]
 }

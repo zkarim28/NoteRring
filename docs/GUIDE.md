@@ -20,6 +20,13 @@
    letters it could still become, so you can check before you accept.
 4. Made a mistake? **Left click** undoes the last flick. With nothing drawn it deletes a character.
 
+### When your flicks match no letter
+
+The screen shows the best guess, for example `br u br tr =?` with `~W? mid=ok` and the tag `FIX`. **Nothing changes until you middle-click**:
+middle click takes the guess, left click undoes the last flick so you can fix it yourself. It only guesses when one letter is clearly the best:
+a flick that landed near a direction boundary counts as evidence, then any one flick off by 45 degrees, then one stray or missing flick (3+ flicks).
+If several letters tie it shows them (`A/F/H?`) and middle click does nothing. A sequence that is already a letter is never replaced. `--no-suggest` turns it off.
+
 Every flick is separate: the pause when you lift is what lets the same direction repeat (`d d r`).
 
 ## Letters
@@ -53,17 +60,24 @@ Every flick is separate: the pause when you lift is what lets the same direction
 | **Y** | ↘ ↗ ↙ | `br tr bl` |
 | **Z** | → ↙ → | `r bl r` |
 
-## Symbols
+## Punctuation (on the wheel)
 
-| Symbol | Flick | Code |
-|:--:|:--|:--|
-| `.` | ↖ | `tl` |
-| `,` | ↗ | `tr` |
-| `?` | ↑ | `u` |
-| `!` | ← | `l` |
-| `'` | → | `r` |
+Scroll the **wheel down** from rest to walk through the marks, **up** to go back (up past the first mark cancels). **Middle click** inserts the one shown.
 
-Punctuation sticks to the word before it. The first letter of the text, and the first after `. ? !`, is a capital.
+```
+. , ? ! ' " - : ; ( ) / @ & # $ % + = * _
+```
+
+Edit the `punctuation` list in `alphabet.json` to reorder or change them. `. , ? ! : ; ) %` stick to the word before them.
+The first letter of the text, and the first after `. ? !`, is a capital.
+
+## Letters one slip apart
+
+A flick that is 45 degrees off turns one of these into the other, and no correction can notice because both are valid. Be careful with:
+
+- **A** `bl br l` and **P** `d br l`
+- **D** `d r bl` and **H** `d r d`
+- **U** `br tr d` and **Y** `br tr bl`
 
 ## Letters that start other letters
 
@@ -80,7 +94,7 @@ You accept a letter yourself, so this is safe: just keep flicking for the longer
 
 ## Numbers and spaces
 
-- **Wheel**: each tick up adds one, each tick down subtracts one (0 to 9). **Middle click** accepts the number as a character.
+- **Wheel up** from rest starts a number: each tick up adds one, each tick down subtracts one (0 to 9). **Middle click** accepts it as a character.
 - **Right click** inserts a space. Middle click with nothing drawn and no number selected also inserts one.
 
 ## Buttons at a glance
@@ -88,7 +102,8 @@ You accept a letter yourself, so this is safe: just keep flicking for the longer
 | Control | Does |
 |:--|:--|
 | Flick | adds a direction to the letter |
-| Middle click | accepts the letter, else the number, else a space |
+| Middle click | accepts the letter (or the suggested one), else the number or mark, else a space |
 | Left click | undoes the last flick, else backspace |
 | Right click | space |
-| Wheel | number 0-9 |
+| Wheel up | number 0-9 |
+| Wheel down | punctuation marks |

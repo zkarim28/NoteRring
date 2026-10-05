@@ -23,10 +23,17 @@ Full reference with arrow pictograms: [docs/GUIDE.md](docs/GUIDE.md)
 | Control | Does |
 |:--|:--|
 | Flick | adds a direction to the letter |
-| Middle click | accepts the letter, else the selected number, else inserts a space |
+| Middle click | accepts the letter (or the suggested one, see below), else the selected number or mark, else inserts a space |
 | Left click | undoes the last flick, else backspace |
 | Right click | space |
-| Wheel | number 0-9: each tick up adds one, each tick down subtracts one; middle click accepts it |
+| Wheel up | a number: from rest each tick up adds one (0-9), each tick down subtracts one; middle click accepts it |
+| Wheel down | punctuation: from rest, scroll down to walk through `. , ? ! ' " - : ; ( ) / @ & # $ % + = * _`, up to go back; middle click inserts the one shown |
+
+**Suggestions.** If your flicks spell no letter, the screen shows the best guess (for example `br u br tr =?` with `~W? mid=ok`). Nothing changes until you middle-click:
+middle click takes the guess, left click undoes a flick so you can fix it yourself. It only guesses when one letter is clearly the best (a flick that landed near a
+direction boundary counts as evidence, then any single flick off by 45 degrees, then one stray or missing flick); ties are shown (`A/F/H?`) and not applied; a sequence that is
+already a letter is never replaced. Approved corrections are logged to `notes/corrections.log` so the thresholds can be tuned. `--no-suggest` turns it off.
+`python ring_writer.py --check` lists letters that are one slip apart (a slip between them cannot be noticed).
 
 The first letter of the text, and the first after `. ? !`, is a capital. Punctuation sticks to the word before it.
 
@@ -76,7 +83,7 @@ Without it, diagonals are often misread.
 - Directions are `u d l r tl tr bl br`. A character may list several sequences and all are accepted.
 - Two characters may not share an exact sequence (the file is rejected with a clear message).
 - A sequence may be the start of a longer one (`d r` is **L**, and also the start of **F** = `d r r`). That is fine because you accept the letter yourself.
-- Add symbols under `"symbols"`. The single flicks are free, so they are good for punctuation.
+- Punctuation is on the wheel, not on strokes: edit the `"punctuation"` list. You can still add a `"symbols"` group (character -> sequence) if you want some marks on strokes.
 
 After editing, regenerate the guide and picture: `python tools/make_guide.py`.
 
@@ -85,20 +92,29 @@ After editing, regenerate the guide and picture: `python tools/make_guide.py`.
 | Option | Meaning |
 |:--|:--|
 | `--min-flick N` | shortest flick that counts, in ring units (default 100). Raise it if you get ghost flicks, lower it if flicks are missed. `--calibrate` suggests a value. |
-| `--gap S` | pause that counts as lifting your finger (default 0.12 s). |
-| `--flip` | reverse which wheel direction adds to the number. |
+| `--gap S` | pause that counts as lifting your finger (default 0.12 s). A flick is only accepted once your finger has been still this long, so this is the biggest source of delay: smaller = faster response, but too small can split one flick into two. |
+| `--lockout S` | seconds the pad is ignored after a click or wheel tick (default 0.35 s), because a click jiggles the pad. Smaller = the next letter can start sooner. |
+| `--measure` | measures your ring's report rate, then the pad jiggle after the middle, left and right buttons and the wheel (about 70 s), and suggests `--gap` and `--lockout`. Close any other program using the port first. |
+| `--flip` | reverse the wheel (swaps which direction counts numbers and which walks punctuation). |
+| `--glyphs arrows\|names` | how flicks are drawn on screen: `arrows` (↘ ↗, the default, for a terminal) or `names` (`br tr`, plain ASCII for a small OLED that has no arrow glyphs). |
+| `--raw` | type the stroke pictograms instead of letters (`↘↗↘↗ ↓→ ...`). Each flick appears at once; middle click ends a letter and shows what it would decode to (`= W`); left click removes the last arrow. Handy for seeing what the ring really sent and for designing alphabets. |
+| `--no-suggest` | turn the correction suggestions off. |
+| `--soft-angle DEG` | a flick this far from the centre of its direction also remembers the neighbouring direction as a runner-up (default 12). |
 | `--screen COLSxROWS` | size of the display drawn in the terminal (default `21x4`, a 128x32 OLED with a 6x8 font). Plain ASCII, so what you see is what a tiny display would show. |
 | `--notes-dir DIR` | where notes are saved (default `notes/`, one file per session, rewritten after every change). |
 | `--alphabet FILE` | use a different alphabet file. |
+
+**Your settings.** `python ring_writer.py --port ... --measure` (about 70 s) measures your ring and saves `--gap`, `--lockout` and the port to `settings.json` (per device, git-ignored);
+the app loads it automatically, and options on the command line still win. Delete `settings.json` to go back to the built-in defaults.
 
 If it says `Resource busy`, another program (usually a serial monitor) has the port.
 
 ## Status
 
-A working prototype.
-- Verified on hardware: the ring pairs with the ESP32-S3 and its raw reports (motion, wheel, buttons) stream over USB serial.
-- Verified in software: alphabet loading, flick detection with calibration, the writer, notes saving, the guide generator (`python -m unittest discover -s tests`), and the live loop against simulated ring input.
-- **Not yet done:** tuning against real handwriting-by-flick on a real hand. Expect to adjust `--min-flick` and the alphabet as you learn what is comfortable.
+A working prototype. The full history, measurements and open issues are in **[PROGRESS.md](PROGRESS.md)**.
+- Verified on a real ring: it pairs with the ESP32-S3 and its raw reports (motion, wheel, buttons) stream over USB serial; calibration, timing measurement and a first writing session (L, I, H, numbers, space, backspace) worked.
+- Verified in software only: correction suggestions, the terminal arrows and raw mode (`python -m unittest discover -s tests`, 50 tests, plus a simulated ring driving the live loop).
+- **Not yet done:** accuracy numbers from real hands over longer use. Expect to adjust `--min-flick`, the timing settings and the alphabet as you learn what is comfortable.
 - The pad reports relative motion only, so there is no absolute position; that is why letters are built from direction flicks.
 
 ## Hardware

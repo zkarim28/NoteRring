@@ -35,6 +35,31 @@ def load_entries(path=ALPHABET_FILE):
     return entries
 
 
+DEFAULT_PUNCTUATION = list(".,?!'\"-:;()/@&#$%+=*_")
+
+
+def load_punctuation(path=ALPHABET_FILE):
+    """The marks the wheel walks through (scroll down from rest). Edit the "punctuation" list in alphabet.json."""
+    with open(path) as f:
+        data = json.load(f)
+    marks = data.get("punctuation", DEFAULT_PUNCTUATION)
+    return [m for m in marks if isinstance(m, str) and len(m) == 1]
+
+
+def near_collisions(entries):
+    """Pairs of different characters whose sequences are one 45-degree slip apart (same length, one flick off by a step).
+    A slip between them turns one valid letter into the other, so no correction can notice it."""
+    flat = [(ch, tuple(NAME_TO_DIR[n] for n in seq)) for ch, seqs in entries for seq in seqs]
+    out = []
+    for i, (ca, a) in enumerate(flat):
+        for cb, b in flat[i + 1:]:
+            if ca != cb and len(a) == len(b):
+                diffs = [(x, y) for x, y in zip(a, b) if x != y]
+                if len(diffs) == 1 and min((diffs[0][0] - diffs[0][1]) % 8, (diffs[0][1] - diffs[0][0]) % 8) == 1:
+                    out.append((ca, " ".join(NAMES[d] for d in a), cb, " ".join(NAMES[d] for d in b)))
+    return out
+
+
 def load_alphabet(path=ALPHABET_FILE):
     """-> {sequence tuple: character}."""
     return {names: ch for ch, seqs in load_entries(path) for names in seqs}
@@ -50,5 +75,6 @@ def cheatsheet(path=ALPHABET_FILE):
         for i, names in enumerate(seqs):
             out.append(f"  {ch if i == 0 else ' '}        {arrows(names):<12}({' '.join(names)})"
                        + ("   also accepted" if i else ""))
-    out += ["", "middle click = accept   left click = undo   right click = space   wheel = number 0-9 (then middle click)"]
+    out += ["", "punctuation (wheel down from rest, middle click to insert): " + " ".join(load_punctuation(path))]
+    out += ["middle click = accept   left click = undo   right click = space   wheel up = number 0-9 (then middle click)"]
     return "\n".join(out)

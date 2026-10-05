@@ -24,10 +24,14 @@ def load_calibration(path=CALIB_FILE):
 
 
 class Flick:
-    """One finger flick -> direction 0..7 (0 = up, then clockwise in 45-degree steps), or None if too short."""
+    """One finger flick -> direction 0..7 (0 = up, then clockwise in 45-degree steps), or None if too short.
 
-    def __init__(self, thresh, rot=0.0, gy=1.0, gap=0.12, lockout=0.35):
-        self.thresh, self.rot, self.gy, self.gap, self.lockout = thresh, rot, gy, gap, lockout
+    When a flick lands within (22.5 - soft) degrees of the boundary with the next sector, the neighbouring direction
+    is kept as `last_alt` (the runner-up), which the writer uses as evidence when suggesting a correction."""
+
+    def __init__(self, thresh, rot=0.0, gy=1.0, gap=0.12, lockout=0.35, soft=12.0):
+        self.thresh, self.rot, self.gy, self.gap, self.lockout, self.soft = thresh, rot, gy, gap, lockout, soft
+        self.last_alt = None
         self.ax = self.ay = 0
         self.last = None
         self.locked_until = 0.0
@@ -47,10 +51,15 @@ class Flick:
 
     def _finish(self):
         result = None
+        self.last_alt = None
         if self.last is not None:
             ang, mag = self.vector()
             if mag >= self.thresh:
-                result = round(math.degrees(ang) / 45) % 8
+                deg = math.degrees(ang)
+                result = round(deg / 45) % 8
+                off = deg - 45 * round(deg / 45)          # -22.5 .. +22.5 degrees from the sector centre
+                if abs(off) >= self.soft:
+                    self.last_alt = (result + (1 if off > 0 else -1)) % 8
         self.ax = self.ay = 0
         self.last = None
         return result
