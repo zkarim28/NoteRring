@@ -1,7 +1,7 @@
 # Project log
 
 What has been built, tried, measured and decided so far, and what is still open. Kept honest: each claim says how it was checked.
-*Last updated: 2026-10-05. Work started 2026-10-01.*
+*Last updated: 2026-10-10. Work started 2026-10-01.*
 
 ## Where things stand
 
@@ -66,6 +66,9 @@ Each step below was built and tested before moving on.
 - **Speed:** `--measure` records the ring for about 70 seconds and suggests `--gap` and `--lockout`.
   Measured on this ring: reports every about 15 ms (99% under 23 ms), longest pause inside a flick 23 ms, shortest lift 225 ms, **no pad jiggle after any button or the wheel**.
   So the defaults (120 ms wait after a flick, 350 ms ignore after a click) were far too cautious; measured values are saved per device in `settings.json` (git-ignored) and loaded automatically.
+
+- **Heat:** the ESP32-S3 felt warm (also before the speed changes; those were Python-side only). The host firmware now runs the CPU at 80 MHz instead of 240, prints the chip's own temperature every 10 s as a `# temp ...` comment line (the Python side ignores it), and writes each report with one USB write instead of about twenty.
+  Flashed and confirmed it still pairs and streams; the first reading was 52.2 C at 80 MHz right after connecting. No before/after comparison was made, so the size of the improvement is unknown.
 
 ## How this was tested
 

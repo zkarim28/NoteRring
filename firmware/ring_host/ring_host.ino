@@ -2,7 +2,22 @@
 // Prints each mouse report as a line the Python side parses:  [id 3 h45] 00 07 00 20 00 00 -> btn=00 dx=7 dy=32 wheel=0
 // Scans for "D06", bonds, subscribes to every HID Report notification and prints raw bytes.
 // Needs NimBLE-Arduino 2.x. Build with CDCOnBoot=cdc so Serial shows up over native USB.
+//
+// Heat: runs the CPU at 80 MHz (BLE and this job need very little compute) and prints the chip's own temperature every
+// 10 s as a comment line ("# temp 41.2 C, cpu 80 MHz"); the Python side ignores lines that start with '#'.
+// Each report is formatted into one buffer and written once, instead of ~20 separate USB writes.
 #include <NimBLEDevice.h>
+
+#ifndef RING_CPU_MHZ
+#define RING_CPU_MHZ 80
+#endif
+static uint32_t lastTempMs = 0;
+
+static void printTemperature() {
+  if (millis() - lastTempMs < 10000) return;
+  lastTempMs = millis();
+  Serial.printf("# temp %.1f C, cpu %u MHz\n", temperatureRead(), (unsigned)getCpuFrequencyMhz());
+}
 
 static const char* TARGET_NAME = "D06";  // substring match on advertised name
 static const NimBLEUUID HID_SVC((uint16_t)0x1812);
@@ -49,15 +64,17 @@ static int nRefs = 0;
 static void onReport(NimBLERemoteCharacteristic* c, uint8_t* data, size_t len, bool) {
   uint8_t id = 0xFF;
   for (int i = 0; i < nRefs; i++) if (refs[i].handle == c->getHandle()) id = refs[i].id;
-  Serial.printf("[id %u h%u] ", id, c->getHandle());
-  for (size_t i = 0; i < len; i++) Serial.printf("%02x ", data[i]);
-  // Tentative mouse decode (mouse report 3 of the D06's HID descriptor): buttons, dx16, dy16, wheel8
+  char line[128];
+  int n = snprintf(line, sizeof(line), "[id %u h%u] ", id, c->getHandle());
+  for (size_t i = 0; i < len && n < (int)sizeof(line) - 48; i++) n += snprintf(line + n, sizeof(line) - n, "%02x ", data[i]);
+  // Mouse decode (mouse report 3 of the D06's HID descriptor): buttons, dx16, dy16, wheel8
   if (id == 3 && len >= 6) {
     int16_t dx = (int16_t)(data[1] | (data[2] << 8));
     int16_t dy = (int16_t)(data[3] | (data[4] << 8));
-    Serial.printf(" -> btn=%02x dx=%d dy=%d wheel=%d", data[0], dx, dy, (int8_t)data[5]);
+    n += snprintf(line + n, sizeof(line) - n, " -> btn=%02x dx=%d dy=%d wheel=%d", data[0], dx, dy, (int8_t)data[5]);
   }
-  Serial.println();
+  line[n++] = '\n';
+  Serial.write((const uint8_t*)line, n);                 // one USB write per report
 }
 
 static bool connectRing() {
@@ -99,6 +116,7 @@ static bool connectRing() {
 }
 
 void setup() {
+  setCpuFrequencyMhz(RING_CPU_MHZ);
   Serial.begin(115200);
   delay(1500);
   Serial.println("ESP32-S3 BLE HID host for D06");
@@ -108,6 +126,7 @@ void setup() {
 }
 
 void loop() {
+  printTemperature();
   if (client && client->isConnected()) {
     delay(500);
     return;
