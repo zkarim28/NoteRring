@@ -13,7 +13,8 @@ What has been built, tried, measured and decided so far, and what is still open.
 | Correction suggestions (approved by middle click) | built | unit tests and simulation only; not yet used on a real ring |
 | Terminal display (arrows or names), raw stroke mode | built | unit tests; simulated ring |
 | 3D-printable wrist unit (case, chain band, snap clasp) | designed | computer checks only; **nothing printed yet**; most part sizes are placeholders |
-| Writer running on the ESP32 itself, OLED, SD card | not started | no parts yet |
+| OLED and SD card on the ESP32 | wired and verified | real hardware: OLED found, SD write and read-back OK |
+| Writer running on the ESP32 itself | not started | |
 
 ## Timeline
 
@@ -69,6 +70,12 @@ Each step below was built and tested before moving on.
 
 - **Heat:** the ESP32-S3 felt warm (also before the speed changes; those were Python-side only). The host firmware now runs the CPU at 80 MHz instead of 240, prints the chip's own temperature every 10 s as a `# temp ...` comment line (the Python side ignores it), and writes each report with one USB write instead of about twenty.
   Flashed and confirmed it still pairs and streams; the first reading was 52.2 C at 80 MHz right after connecting. No before/after comparison was made, so the size of the improvement is unknown.
+
+### 2026-10-10: OLED and SD card wired and verified
+
+- Wired the 0.91 inch OLED (I2C) and a microSD module (SPI) to the ESP32-S3 Super Mini; pins and notes in [firmware/hardware_test/WIRING.md](firmware/hardware_test/WIRING.md).
+- `firmware/hardware_test` initializes both and reports on the OLED and serial. Real hardware result: the OLED answered at 0x3C, and the SD card mounted, wrote a file and read it back. (The first run said "SD: NOT FOUND" until the card was reseated with power off.)
+- Still to do on this front: show the writer's text on the OLED, save notes to the SD card from the ESP32, and run the letter decoding on the board.
 
 ## How this was tested
 
