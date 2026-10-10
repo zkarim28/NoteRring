@@ -111,7 +111,7 @@ If it says `Resource busy`, another program (usually a serial monitor) has the p
 
 ## Status
 
-A working prototype. The full history, measurements and open issues are in **[PROGRESS.md](PROGRESS.md)**.
+A working prototype. The full history, measurements and open issues are in **[PROGRESS.md](PROGRESS.md)**; the step-by-step story of how it was built is in [docs/DEVLOG.md](docs/DEVLOG.md).
 - Verified on a real ring: it pairs with the ESP32-S3 and its raw reports (motion, wheel, buttons) stream over USB serial; calibration, timing measurement and a first writing session (L, I, H, numbers, space, backspace) worked.
 - Verified in software only: correction suggestions, the terminal arrows and raw mode (`python -m unittest discover -s tests`, 50 tests, plus a simulated ring driving the live loop).
 - **Not yet done:** accuracy numbers from real hands over longer use. Expect to adjust `--min-flick`, the timing settings and the alphabet as you learn what is comfortable.

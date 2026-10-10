@@ -3,6 +3,8 @@
 What has been built, tried, measured and decided so far, and what is still open. Kept honest: each claim says how it was checked.
 *Last updated: 2026-10-10. Work started 2026-10-01.*
 
+For the prompt-by-prompt story of how it was built (what was asked, done and observed, plus mistakes), see [docs/DEVLOG.md](docs/DEVLOG.md).
+
 ## Where things stand
 
 | Area | Status | Checked how |
